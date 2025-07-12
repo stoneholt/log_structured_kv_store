@@ -2,6 +2,9 @@ from database.index import Index
 from time import time
 from pathlib import Path
 
+DELETE_MARKER = "t0MbStoNe"
+
+
 class KeyDir:
     dir: dict = {}
     keys: Index = Index()
@@ -45,3 +48,8 @@ class KeyDir:
         file_id, value_size, value_position, timestamp = self._write_to_file(key, value)
         self.dir[key] = { "file_id": file_id, "value_size": value_size, "value_position": value_position, "timestamp": timestamp }
         self.keys.add_to_index(key)
+
+    def delete(self, key: str) -> None:
+        if key in self.dir[key]:
+            del self.dir[key]
+            self._write_to_file(key, DELETE_MARKER)
