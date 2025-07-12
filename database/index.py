@@ -1,4 +1,5 @@
 from typing import List
+from .skiplist import SkipList
 
 
 class Index:
@@ -7,18 +8,16 @@ class Index:
     """
 
     def __init__(self):
-        self.keys = []
+        self.keylist = SkipList()
 
     def add_to_index(self, key: str):
-        self.keys.append(key)
-        self.keys = sorted(self.keys)
+        self.keylist.insert(key)
 
     def remove_from_index(self, key: str):
-        self.keys.remove(key)
+        self.keylist.delete(key)
 
     def search(self, key: str):
-        if key in self.keys:
-            return key
+        return self.keylist.search(key)
 
     def range_query(self, start: str, end: str) -> List:
         raise NotImplementedError()
