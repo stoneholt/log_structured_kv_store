@@ -96,7 +96,7 @@ class SkipList:
         current = current.next[0]
 
         if current and current.value == value:
-            return current  # Found
+            return current.value  # Found
         else:
             return None  # Not found
 
@@ -115,13 +115,18 @@ class SkipList:
             update[i] = current
 
         # At level 0, current.next[0] is the node to potentially delete
-        current = current.next[0]
+        # Renamed to avoid confusion with traversal 'current'
+        current_to_delete = current.next[0]
 
-        if current and current.value == value:
+        if current_to_delete and current_to_delete.value == value:
             # Update pointers to bypass the node to be deleted
-            for i in range(current.level + 1):
-                if update[i].next[i] == current:  # Only update if current node points to it
-                    update[i].next[i] = current.next[i]
+            # Iterate up to the effective level of the node being deleted
+            # which is len(current_to_delete.next) - 1
+            # Iterate from 0 up to its highest level
+            for i in range(len(current_to_delete.next)):
+                # Only update if current node points to it
+                if update[i].next[i] == current_to_delete:
+                    update[i].next[i] = current_to_delete.next[i]
 
             # Adjust the Skip List's overall max level if the deleted node
             # was at the highest level and no other nodes exist at that level.
