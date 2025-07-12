@@ -81,6 +81,23 @@ class SkipList:
             new_node.next[i] = update[i].next[i]
             update[i].next[i] = new_node
 
+    def starts_with(self, prefix: str):
+        results = []
+        current = self.head
+        # Traverse from the highest level down
+        for i in range(self.level, -1, -1):
+            while current.next[i] and current.next[i].value[:len(prefix)] < prefix:
+                current = current.next[i]
+
+        # At level 0, current.next[0] should be the potential node
+        current = current.next[0]
+
+        if current and current.value[:len(prefix)] == prefix:
+            while current and current.value[:len(prefix)] == prefix:
+                results.append(current.value)
+                current = current.next[0]
+        return results
+
     def search(self, value):
         """
         Searches for a value in the Skip List.

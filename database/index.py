@@ -1,4 +1,3 @@
-from typing import List
 from .skiplist import SkipList
 
 
@@ -19,8 +18,8 @@ class Index:
     def search(self, key: str):
         return self.keylist.search(key)
 
-    def range_query(self, start: str, end: str) -> List:
+    def range_query(self, start: str, end: str) -> list:
         raise NotImplementedError()
 
-    def starts_with(self, query_string: str):
-        raise NotImplementedError()
+    def starts_with(self, query_string: str) -> list:
+        return self.keylist.starts_with(query_string)
