@@ -7,16 +7,18 @@ class Index:
     """
 
     def __init__(self):
-        raise NotImplementedError()
+        self.keys = []
 
-    def add_to_index(self, key: str, entry: dict):
-        raise NotImplementedError()
+    def add_to_index(self, key: str):
+        self.keys.append(key)
+        self.keys = sorted(self.keys)
 
     def remove_from_index(self, key: str):
-        raise NotImplementedError()
+        self.keys.remove(key)
 
     def search(self, key: str):
-        raise NotImplementedError()
+        if key in self.keys:
+            return key
 
     def range_query(self, start: str, end: str) -> List:
         raise NotImplementedError()
