@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .index import Index
-# from .keydir import KeyDir
+from .keydir import KeyDir
 from pydantic import BaseModel
 
 from abc import ABC, abstractmethod
@@ -26,6 +26,23 @@ class DataStore(ABC):
     @abstractmethod
     def prefix_query(self, query):
         pass
+
+
+class KVStore(DataStore):
+    def __init__(self):
+        self.db = KeyDir()
+
+    def get(self, key):
+        return self.db.find_value(key)
+
+    def put(self, key, value):
+        self.db.insert(key, value)
+
+    def delete(self, key):
+        self.db.delete(key)
+
+    def prefix_search(self, query):
+        return self.db.prefix_search(query)
 
 
 class SimpleDataStore(DataStore):

@@ -53,6 +53,7 @@ class KeyDir:
     def delete(self, key: str) -> None:
         if key in self.dir[key]:
             del self.dir[key]
+            self.index.remove_from_index(key)
             self._write_to_file(key, DELETE_MARKER)
 
     def find_value(self, key: str) -> str | None:
@@ -67,3 +68,7 @@ class KeyDir:
                 return decoded_value
 
         return None
+
+    def prefix_search(self, prefix: str):
+        results = self.index.prefix_search(prefix)
+        return [(key, self.find_value(key)) for key in results]
