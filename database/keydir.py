@@ -15,17 +15,37 @@ class KeyDir:
             Path.mkdir("./data")
 
     def _clean_data_directory(self):
-        pass
+        timestamp = time()
+        self.active_file = f"{timestamp}-data.dat"
+        with Path.open(Path(f"./data/{self.active_file}"), "ab") as f:
+            for key in self.dir:
+                value = self.find_value(key)
+                position = f.tell()
+                encoded_key = key.encode("utf-8")
+                key_size = len(encoded_key).to_bytes(4, "big")
+                f.write(key_size)
+                encoded_value = value.encode("utf-8")
+                value_size = len(encoded_value).to_bytes(4, "big")
+                f.write(value_size)
+                f.write(encoded_key)
+                f.write(encoded_value)
+                self.dir[key]["file_id"] = self.active_file
+                self.dir[key]["position"] = position
+            f.flush()
+
+        for file in Path("./data").iterdir():
+            if file != self.active_file:
+                file.unlink()
 
     def _validate_file(self):
         if self.active_file == "":
             timestamp = time()
             self.active_file = f"{timestamp}-data.dat"
         elif (Path(f"./data/{self.active_file}").stat().st_size / (1024 * 1024 * 1024)) > 2: # file bigger than 2 GB (or whatever value)
-            timestamp = time()
-            self.active_file = f"{timestamp}-data.dat"
             if len(Path("./data").iterdir()) > 10: # more than 10 files used
                 self._clean_data_directory()
+            timestamp = time()
+            self.active_file = f"{timestamp}-data.dat"
 
     def _write_to_file(self, key: str, value: str) -> list[str, int]:
         # needs to return file ID, value size, value position, and timestamp
@@ -46,8 +66,8 @@ class KeyDir:
         return [self.active_file, position]
 
     def insert(self, key: str, value: str) -> None:
-        file_id, value_position = self._write_to_file(key, value)
-        self.dir[key] = { "file_id": file_id, "value_position": value_position }
+        file_id, position = self._write_to_file(key, value)
+        self.dir[key] = { "file_id": file_id, "position": position }
         self.keys.add_to_index(key)
 
     def delete(self, key: str) -> None:

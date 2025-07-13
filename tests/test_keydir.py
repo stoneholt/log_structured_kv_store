@@ -8,7 +8,7 @@ def test_insert():
         kd._write_to_file = MagicMock(return_value=["file_id", 0])
         kd.insert("test_key", "test_value")
 
-    expected = {"test_key": {"file_id": "file_id", "value_position": 0}}
+    expected = {"test_key": {"file_id": "file_id", "position": 0}}
     assert kd.dir == expected
 
 def test_find_value_none():
